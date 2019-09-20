@@ -12,18 +12,17 @@ import (
 var JwtAuthentication = func(next http.Handler) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		//All paths require authentication on this api
-		// notAuth := []string{"/login"} //List of endpoints that don't require auth
-		// requestPath := r.URL.Path     //current request path
+		notAuth := []string{"/"}  //List of endpoints that don't require auth
+		requestPath := r.URL.Path //current request path
 
-		// //check if request does not need authentication, serve the request if it doesn't need it
-		// for _, value := range notAuth {
+		//check if request does not need authentication, serve the request if it doesn't need it
+		for _, value := range notAuth {
 
-		// 	if value == requestPath {
-		// 		next.ServeHTTP(w, r)
-		// 		return
-		// 	}
-		// }
+			if value == requestPath {
+				next.ServeHTTP(w, r)
+				return
+			}
+		}
 
 		response := make(map[string]interface{}) //initialise
 		token := r.Header.Get("Authorization")   //Grab the Google token from the header
@@ -58,8 +57,6 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 		}
 
 		//Everything went well, proceed with the request and set the caller to the user retrieved from the parsed token
-		fmt.Printf("User %s verified and being stored in context", claimSet.Name) //Useful for monitoring
-
 		ctx := context.WithValue(r.Context(), m.Userkey, claimSet)
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r) //proceed in the middleware chain!

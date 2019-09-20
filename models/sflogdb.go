@@ -7,17 +7,11 @@ import (
 	//See example at https://gorm.io/docs/connecting_to_the_database.html
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/joho/godotenv"
 )
 
 var db *gorm.DB //database
 
 func init() {
-
-	e := godotenv.Load() //Load .env file
-	if e != nil {
-		fmt.Print(e)
-	}
 
 	username := os.Getenv("user")
 	password := os.Getenv("password")

@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	"fmt"
 	u "sflogapi/utils"
 
@@ -43,10 +42,10 @@ func Login(email string) map[string]interface{} {
 
 //VerifyUser returns an error if the user is not registered on our system
 func VerifyUser(email string) error {
-	acc := &User{}
-	GetDB().Table("users").Where("email = ?", email).First(acc)
-	if acc.Email == "" { //User not found!
-		return errors.New("User not found")
+	user := &User{}
+	GetDB().Table("users").Where("email = ?", email).First(user)
+	if user.Email == "" { //User not found!
+		return fmt.Errorf("User not found: %s", email)
 	}
 	return nil
 }
@@ -67,18 +66,19 @@ func TestToken(tok string) (googleAuthIDTokenVerifier.ClaimSet, error) {
 	err := v.VerifyIDToken(tok, []string{
 		aud,
 	})
-	var claimSet *googleAuthIDTokenVerifier.ClaimSet
+
 	if err == nil {
+		var claimSet *googleAuthIDTokenVerifier.ClaimSet
 		claimSet, err := googleAuthIDTokenVerifier.Decode(tok)
 		if err != nil {
+			var cs googleAuthIDTokenVerifier.ClaimSet
 			fmt.Println("Token not verified against google requirements", err)
-			return *claimSet, err
-		} else {
-			return *claimSet, nil
+			return cs, err
 		}
-	} else {
-		fmt.Println("Token not verified against client account ", err)
-		return *claimSet, err
+		return *claimSet, nil
 	}
+	fmt.Println("Token not verified against client account ", err)
+	var cs googleAuthIDTokenVerifier.ClaimSet
+	return cs, err
 
 }

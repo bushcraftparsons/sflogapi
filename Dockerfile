@@ -8,6 +8,7 @@ RUN go get github.com/lib/pq
 RUN go get github.com/joho/godotenv
 RUN go get github.com/jinzhu/gorm
 RUN go get github.com/gorilla/mux
+RUN go get github.com/gorilla/handlers
 RUN go install sflogapi
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 

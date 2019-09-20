@@ -11,7 +11,6 @@ import (
 
 //Authenticate sends the request to be authenticated
 var Authenticate = func(w http.ResponseWriter, r *http.Request) {
-
 	// account := &models.User{}
 
 	// b, err := ioutil.ReadAll(r.Body)
