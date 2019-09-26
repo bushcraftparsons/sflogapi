@@ -1,20 +1,21 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"sflogapi/app"
 	"sflogapi/controllers"
 
+	u "sflogapi/utils"
+
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 )
 
 func homeLink(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome home!")
+	resp := u.Message(true, "Welcome to sfl!")
+	resp["user"] = "Susannah Parsons"
+	u.Respond(w, resp)
 }
 
 //Curl test
@@ -25,11 +26,6 @@ func homeLink(w http.ResponseWriter, r *http.Request) {
  -X OPTIONS --verbose http://localhost:8080/login
 */
 func main() {
-	//Loads the .env file with db connection info
-	e := godotenv.Load() //Load .env file
-	if e != nil {
-		fmt.Print(e)
-	}
 	//Update security group for DB with current ip if running on dev
 	//https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#SecurityGroups:search=sg-1cdc4442;sort=groupId
 
@@ -39,16 +35,11 @@ func main() {
 	// router.HandleFunc("/login", controllers.Authenticate).Methods("POST, OPTIONS, PUT, HEAD, GET")
 	router.HandleFunc("/login", controllers.Authenticate).Methods("POST")
 
-	port := os.Getenv("HOSTPORT") //Get port, not set locally, needs to be set on production
-	if port == "" {
-		port = "8080" //localhost
-	}
-
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "Accept", "Origin", "Referer", "Sec-Fetch-Mode", "User-Agent"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
 	// start server listen
 	// with error handling
-	log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(originsOk, headersOk, methodsOk)(router))) //Launch the app, visit localhost:8080/api
+	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(router))) //Launch the app, visit localhost:8080/api
 }

@@ -21,6 +21,7 @@ WORKDIR /root/
 
 # Copy the Pre-built binary file from the previous stage
 COPY --from=builder /go/src/sflogapi/main .
+COPY --from=builder /go/src/sflogapi/.env .
 
 # Expose port 8080 to the outside world
 EXPOSE 8080
