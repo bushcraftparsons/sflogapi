@@ -8,22 +8,26 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type key string
-
-//Userkey references the user data in context
-const (
-	Userkey key = "user"
-)
-
 //User is a struct to rep user account
 type User struct {
-	Firstname   string `json:"first_name,omitempty"`
-	Lastname    string `json:"last_name,omitempty"`
-	Email       string `json:"email,omitempty"`
-	Googletoken string `json:"google_token,omitempty"`
+	ID    int    `gorm:"PRIMARY_KEY" json:"id,omitempty"`
+	Email string `json:"email,omitempty"`
 }
 
-//Login authenticate and check google token
+//GetUserID returns the user id for the given email
+func GetUserID(email string) int {
+	var user User
+	err := GetDB().Where("email = ?", email).First(&user).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return 0
+		}
+		return 0
+	}
+	return user.ID
+}
+
+//Login authenticate
 func Login(email string) map[string]interface{} {
 	var user User
 	fmt.Println(fmt.Sprintf("Logging in user %s", email))
@@ -41,19 +45,19 @@ func Login(email string) map[string]interface{} {
 }
 
 //VerifyUser returns an error if the user is not registered on our system
-func VerifyUser(email string) error {
-	user := &User{}
-	GetDB().Table("users").Where("email = ?", email).First(user)
+func VerifyUser(email string) (int, error) {
+	user := User{}
+	GetDB().Table("users").Where("email = ?", email).First(&user)
 	if user.Email == "" { //User not found!
-		return fmt.Errorf("User not found: %s", email)
+		return 0, fmt.Errorf("User not found: %s", email)
 	}
-	return nil
+	return user.ID, nil
 }
 
 //TestDB is for testing the database
 func TestDB(email string) {
-	user := &User{}
-	err := GetDB().Table("users").Where("email = ?", email).First(user).Error
+	user := User{}
+	err := GetDB().Table("users").Where("email = ?", email).First(&user).Error
 	if err != nil {
 		fmt.Println("Error", err)
 	}

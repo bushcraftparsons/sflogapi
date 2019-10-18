@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"sflogapi/models"
 	u "sflogapi/utils"
@@ -26,10 +25,9 @@ var Authenticate = func(w http.ResponseWriter, r *http.Request) {
 	// 	u.Respond(w, u.Message(false, "Failed decoding to user struct"))
 	// 	return
 	// }
-	cs, ok := r.Context().Value(models.Userkey).(*googleAuthIDTokenVerifier.ClaimSet)
-	if !ok {
-		fmt.Println("User context not found")
-	}
+
+	var cs *googleAuthIDTokenVerifier.ClaimSet
+	cs = u.GetContext(w, r, u.Userkey).(*googleAuthIDTokenVerifier.ClaimSet)
 	var claimSet googleAuthIDTokenVerifier.ClaimSet
 	claimSet = *cs
 	email := claimSet.Email

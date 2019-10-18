@@ -32,8 +32,21 @@ func main() {
 	router := mux.NewRouter()
 	router.Use(app.JwtAuthentication) //attach JWT auth middleware
 	router.HandleFunc("/", homeLink).Methods("GET")
-	// router.HandleFunc("/login", controllers.Authenticate).Methods("POST, OPTIONS, PUT, HEAD, GET")
 	router.HandleFunc("/login", controllers.Authenticate).Methods("POST")
+
+	router.HandleFunc("/addLog", controllers.AddLog).Methods("POST")
+
+	router.HandleFunc("/listAircraft", controllers.ListAircraft).Methods("GET")
+	router.HandleFunc("/addAircraft", controllers.AddAircraft).Methods("POST")
+	router.HandleFunc("/deleteAircraft", controllers.DeleteAircraft).Methods("POST")
+
+	router.HandleFunc("/listPlaces", controllers.ListPlaces).Methods("GET")
+	router.HandleFunc("/addPlace", controllers.AddPlace).Methods("POST")
+	router.HandleFunc("/deletePlace", controllers.DeletePlace).Methods("POST")
+
+	router.HandleFunc("/listCapacity", controllers.ListCapacity).Methods("GET")
+	router.HandleFunc("/addCapacity", controllers.AddCapacity).Methods("POST")
+	router.HandleFunc("/deleteCapacity", controllers.DeleteCapacity).Methods("POST")
 
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "Accept", "Origin", "Referer", "Sec-Fetch-Mode", "User-Agent"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
