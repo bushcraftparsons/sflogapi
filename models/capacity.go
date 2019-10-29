@@ -13,7 +13,7 @@ type Capacity struct {
 //ListCapacity returns a list of all the Capacity
 func ListCapacity(userid int) map[string]interface{} {
 	Capacity := []Capacity{}
-	err := GetDB().Table("capacity").Find(&Capacity).Where("user_id = ?", userid)
+	err := GetDB().Table("capacity").Where("user_id = ?", userid).Find(&Capacity)
 	if err.Error != nil {
 		return u.Message(false, "Error getting list of Capacity")
 	}

@@ -14,7 +14,7 @@ type Aircraft struct {
 //ListAircraft returns a list of all the aircraft with types
 func ListAircraft(userid int) map[string]interface{} {
 	aircraft := []Aircraft{}
-	err := GetDB().Table("aircraft").Find(&aircraft).Where("user_id = ?", userid)
+	err := GetDB().Table("aircraft").Where("user_id = ?", userid).Find(&aircraft)
 	if err.Error != nil {
 		return u.Message(false, "Error getting list of aircraft")
 	}

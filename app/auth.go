@@ -44,8 +44,7 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 			u.Respond(w, response)
 			return
 		}
-		claimSet := &cs //Dereference pointer
-
+		claimSet := &cs //Access memory location of pointer
 		userid, err := m.VerifyUser(claimSet.Email)
 		if err != nil { //User not registered, returns with http code 403 as usual
 			fmt.Println("User not registered", err)
@@ -58,7 +57,7 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 
 		//Everything went well, proceed with the request and set the caller to the user retrieved from the parsed token
 		ctx := context.WithValue(r.Context(), u.Userkey, claimSet)
-		ctx = context.WithValue(r.Context(), u.UserID, userid)
+		ctx = context.WithValue(ctx, u.UserID, userid)
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r) //proceed in the middleware chain!
 	})

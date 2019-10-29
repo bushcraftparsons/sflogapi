@@ -35,6 +35,7 @@ func main() {
 	router.HandleFunc("/login", controllers.Authenticate).Methods("POST")
 
 	router.HandleFunc("/addLog", controllers.AddLog).Methods("POST")
+	router.HandleFunc("/listLogs", controllers.ListLogs).Methods("POST")
 
 	router.HandleFunc("/listAircraft", controllers.ListAircraft).Methods("GET")
 	router.HandleFunc("/addAircraft", controllers.AddAircraft).Methods("POST")
@@ -49,7 +50,7 @@ func main() {
 	router.HandleFunc("/deleteCapacity", controllers.DeleteCapacity).Methods("POST")
 
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "Accept", "Origin", "Referer", "Sec-Fetch-Mode", "User-Agent"})
-	originsOk := handlers.AllowedOrigins([]string{"*"})
+	originsOk := handlers.AllowedOrigins([]string{"*", "http://localhost:3001", "https://sflog.formyer.com", "http://192.168.1.75:3001"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
 	// start server listen

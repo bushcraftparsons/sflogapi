@@ -13,7 +13,7 @@ type Place struct {
 //ListPlaces returns a list of all the Places
 func ListPlaces(userid int) map[string]interface{} {
 	Places := []Place{}
-	err := GetDB().Find(&Places).Where("user_id = ?", userid)
+	err := GetDB().Where("user_id = ?", userid).Find(&Places)
 	if err.Error != nil {
 		return u.Message(false, "Error getting list of places")
 	}

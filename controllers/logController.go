@@ -10,6 +10,11 @@ import (
 	"time"
 )
 
+type indexData struct {
+	start int
+	end   int
+}
+
 //AddLog sends the request to be added to the logs
 var AddLog = func(w http.ResponseWriter, r *http.Request) {
 	var userid int
@@ -37,5 +42,24 @@ var AddLog = func(w http.ResponseWriter, r *http.Request) {
 	log.UpdatedAt = time.Now()
 
 	resp := models.AddLog(*log)
+	u.Respond(w, resp)
+}
+
+/*
+ListLogs lists all the logs for the given user between the given indices
+*/
+var ListLogs = func(w http.ResponseWriter, r *http.Request) {
+	var userid int
+	userid = u.GetContext(w, r, u.UserID).(int)
+
+	decoder := json.NewDecoder(r.Body)
+
+	var data indexData
+	err := decoder.Decode(&data)
+	if err != nil {
+		panic(err)
+	}
+
+	resp := models.ListLogs(userid, data.start, data.end)
 	u.Respond(w, resp)
 }

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"sflogapi/models"
 	u "sflogapi/utils"
@@ -26,10 +27,12 @@ var Authenticate = func(w http.ResponseWriter, r *http.Request) {
 	// 	return
 	// }
 
-	var cs *googleAuthIDTokenVerifier.ClaimSet
-	cs = u.GetContext(w, r, u.Userkey).(*googleAuthIDTokenVerifier.ClaimSet)
-	var claimSet googleAuthIDTokenVerifier.ClaimSet
-	claimSet = *cs
+	var claimSet *googleAuthIDTokenVerifier.ClaimSet
+	claimSet, ok := u.GetContext(w, r, u.Userkey).(*googleAuthIDTokenVerifier.ClaimSet)
+	if !ok {
+		fmt.Printf("%T\n", u.GetContext(w, r, u.Userkey))
+		u.Respond(w, u.Message(false, "Failed to get user context"))
+	}
 	email := claimSet.Email
 	resp := models.Login(email)
 	u.Respond(w, resp)
