@@ -3,17 +3,13 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"log"
 	"net/http"
 	"sflogapi/models"
 	u "sflogapi/utils"
 	"time"
 )
-
-type indexData struct {
-	start int
-	end   int
-}
 
 //AddLog sends the request to be added to the logs
 var AddLog = func(w http.ResponseWriter, r *http.Request) {
@@ -22,13 +18,8 @@ var AddLog = func(w http.ResponseWriter, r *http.Request) {
 
 	log := &models.Log{}
 
-	b, err := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
-	}
-	err = json.Unmarshal(b, &log) //decode the request body into struct and fail if any error occurs
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&log)
 	if err != nil {
 		fmt.Println("Error", err)
 		u.Respond(w, u.Message(false, "Failed decoding to log struct"))
@@ -52,14 +43,20 @@ var ListLogs = func(w http.ResponseWriter, r *http.Request) {
 	var userid int
 	userid = u.GetContext(w, r, u.UserID).(int)
 
-	decoder := json.NewDecoder(r.Body)
-
-	var data indexData
-	err := decoder.Decode(&data)
-	if err != nil {
-		panic(err)
+	type indexData struct {
+		Start int `json:"start,omitempty"`
+		End   int `json:"end,omitempty"`
 	}
 
-	resp := models.ListLogs(userid, data.start, data.end)
+	dec := json.NewDecoder(r.Body)
+	var data indexData
+	for {
+		if err := dec.Decode(&data); err == io.EOF {
+			break
+		} else if err != nil {
+			log.Fatal(err)
+		}
+	}
+	resp := models.ListLogs(userid, data.Start, data.End)
 	u.Respond(w, resp)
 }

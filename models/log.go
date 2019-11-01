@@ -39,13 +39,15 @@ func AddLog(log Log) map[string]interface{} {
 }
 
 //ListLogs returns a list of logs between the two indexes
-func ListLogs(userid int, start int, end int) map[string]interface{} {
+func ListLogs(userid, startIndex, endIndex int) map[string]interface{} {
 	logs := []Log{}
 	//start says how many records to offset (skip), so if starting at record 1, then skip 0 records.
 	//end-start gives the limit i.e. if you want to show 1-20, then that is 20 records. 1+20-1.
+	limit := (1 + endIndex) - startIndex
+	offset := startIndex - 1
 	err := GetDB().Table("logs").Where("user_id = ?", userid).Order("date desc").
-		Limit(1 + end - start).
-		Offset(start - 1).Find(&logs)
+		Limit(limit).
+		Offset(offset).Find(&logs)
 
 	if err.Error != nil {
 		return u.Message(false, "Error getting list of logs")
