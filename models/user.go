@@ -10,8 +10,9 @@ import (
 
 //User is a struct to rep user account
 type User struct {
-	ID    int    `gorm:"PRIMARY_KEY" json:"id,omitempty"`
-	Email string `json:"email,omitempty"`
+	ID      int    `gorm:"PRIMARY_KEY" json:"id,omitempty"`
+	Email   string `json:"email,omitempty"`
+	IsAdmin bool   `gorm:"is_admin" json:"isAdmin,omitempty"`
 }
 
 //GetUserID returns the user id for the given email

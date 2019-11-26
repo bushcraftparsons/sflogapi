@@ -27,10 +27,12 @@ func init() {
 	dbName := os.Getenv("dbname")
 	dbHost := os.Getenv("host")
 	port := os.Getenv("port")
+	sslrootcert := os.Getenv("sslrootcert")
+	sslmode := os.Getenv("sslmode")
 
-	dbURI := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s", dbHost, port, username, dbName, password) //Build connection string
+	dbURI := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslrootcert=%s sslmode=%s",
+		dbHost, port, username, dbName, password, sslrootcert, sslmode) //Build connection string
 	fmt.Println("Connecting to db")
-	//"postgres", "host=myhost port=myport user=gorm dbname=gorm password=mypassword"
 	conn, err := gorm.Open("postgres", dbURI)
 	if err != nil {
 		fmt.Print("Failed to connect to db: ", err)
