@@ -55,5 +55,6 @@ func main() {
 
 	// start server listen
 	// with error handling
-	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(router))) //Launch the app, visit localhost:8080/api
+	// using TLS
+	log.Fatal(http.ListenAndServeTLS(":8080", "apiserver.crt", "apiserver.key", handlers.CORS(originsOk, headersOk, methodsOk)(router))) //Launch the app, visit https://localhost:8080/api
 }

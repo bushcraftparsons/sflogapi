@@ -1,0 +1,3 @@
+openssl genrsa -out apiserver.key 2048
+openssl ecparam -genkey -name secp384r1 -out apiserver.key
+openssl req -new -x509 -sha256 -key apiserver.key -out apiserver.crt -days 3650
