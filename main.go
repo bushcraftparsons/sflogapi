@@ -12,7 +12,6 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-
 	//"golang.org/x/crypto/acme/autocert" //Package autocert provides automatic access to certificates from Let's Encrypt and any other ACME-based CA.
 )
 
@@ -60,8 +59,5 @@ func main() {
 	// start server listen
 	// with error handling
 	// using TLS
-	// Includes redirect from http above to https
-	// log.Fatal(server.ListenAndServeTLS("", "")) //Key and cert are coming from Let's Encrypt
-	// log.Fatal(server.ListenAndServeTLS(":8080", "", "", handlers.CORS(originsOk, headersOk, methodsOk)(router))) //Key and cert are coming from Let's Encrypt
-	log.Fatal(http.ListenAndServeTLS(":8080", "apiserver.crt", "apiserver.key", handlers.CORS(originsOk, headersOk, methodsOk)(router))) //Launch the app, visit https://localhost:8080/api
+	log.Fatal(http.ListenAndServeTLS(":8080", "/keys/cert.crt", "/keys/cert.key", handlers.CORS(originsOk, headersOk, methodsOk)(router))) //Launch the app, visit https://localhost:8080/api
 }
