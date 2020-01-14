@@ -8,12 +8,9 @@ import (
 
 	u "sflogapi/utils"
 
-	"crypto/tls"
-
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-
-	"golang.org/x/crypto/acme/autocert" //Package autocert provides automatic access to certificates from Let's Encrypt and any other ACME-based CA.
+	//Package autocert provides automatic access to certificates from Let's Encrypt and any other ACME-based CA.
 )
 
 func homeLink(w http.ResponseWriter, r *http.Request) {
@@ -32,12 +29,6 @@ func homeLink(w http.ResponseWriter, r *http.Request) {
 func main() {
 	//Update security group for DB with current ip if running on dev
 	//https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#SecurityGroups:search=sg-1cdc4442;sort=groupId
-
-	certManager := autocert.Manager{
-		Prompt:     autocert.AcceptTOS,
-		HostPolicy: autocert.HostWhitelist("formyer.com", "localhost"), //Your domain here
-		Cache:      autocert.DirCache("certs"),                         //Folder for storing certificates
-	}
 
 	router := mux.NewRouter()
 	router.Use(app.JwtAuthentication) //attach JWT auth middleware
@@ -63,19 +54,9 @@ func main() {
 	originsOk := handlers.AllowedOrigins([]string{"*", "http://localhost:3001", "https://sfl.formyer.com", "http://86.184.53.15:3001"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
-	server := &http.Server{
-		Addr: ":https",
-		TLSConfig: &tls.Config{
-			GetCertificate: certManager.GetCertificate,
-		},
-	}
-
-	go http.ListenAndServe(":http", certManager.HTTPHandler(nil))
-
 	// start server listen
 	// with error handling
 	// using TLS
 	// Includes redirect from http above to https
-	log.Fatal(server.ListenAndServeTLS(":8080", "", "", handlers.CORS(originsOk, headersOk, methodsOk)(router))) //Key and cert are coming from Let's Encrypt
-	// log.Fatal(http.ListenAndServeTLS(":8080", "apiserver.crt", "apiserver.key", handlers.CORS(originsOk, headersOk, methodsOk)(router))) //Launch the app, visit https://localhost:8080/api
+	log.Fatal(http.ListenAndServeTLS(":8080", "apiserver.crt", "apiserver.key", handlers.CORS(originsOk, headersOk, methodsOk)(router))) //Launch the app, visit https://localhost:8080/api
 }
