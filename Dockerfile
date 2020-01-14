@@ -24,6 +24,8 @@ COPY --from=builder /go/src/sflogapi/main .
 COPY --from=builder /go/src/sflogapi/.env .
 COPY --from=builder /go/src/sflogapi/pgserver.crt .
 COPY --from=builder /go/src/sflogapi/pgserver.pem .
+COPY --from=builder /go/src/sflogapi/apiserver.crt .
+COPY --from=builder /go/src/sflogapi/apiserver.key .
 
 # Expose port 8080 to the outside world
 EXPOSE 8080
